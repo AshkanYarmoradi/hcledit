@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"go.mercari.io/hcledit"
+	"github.com/AshkanYarmoradi/hcledit"
 )
 
 func Example() {

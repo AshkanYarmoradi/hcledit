@@ -5,7 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"go.mercari.io/hcledit"
+	"github.com/AshkanYarmoradi/hcledit"
 )
 
 type UpdateOptions struct {

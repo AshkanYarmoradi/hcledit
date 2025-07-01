@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"os"
 
-	"go.mercari.io/hcledit/cmd/hcledit/internal/command"
+	"github.com/AshkanYarmoradi/hcledit/cmd/hcledit/internal/command"
 )
 
 func main() {

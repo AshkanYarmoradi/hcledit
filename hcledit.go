@@ -12,10 +12,10 @@ import (
 	"github.com/hashicorp/hcl/v2/hclwrite"
 	"github.com/zclconf/go-cty/cty"
 
-	"go.mercari.io/hcledit/internal/converter"
-	"go.mercari.io/hcledit/internal/handler"
-	"go.mercari.io/hcledit/internal/query"
-	"go.mercari.io/hcledit/internal/walker"
+	"github.com/AshkanYarmoradi/hcledit/internal/converter"
+	"github.com/AshkanYarmoradi/hcledit/internal/handler"
+	"github.com/AshkanYarmoradi/hcledit/internal/query"
+	"github.com/AshkanYarmoradi/hcledit/internal/walker"
 )
 
 // HCLEditor implements an editor of HCL configuration.
@@ -27,7 +27,7 @@ type HCLEditor struct {
 
 // TODO(slewiskelly): Should these be exported?
 // Users of this package are not allowed to import
-// "go.mercari.io/hcledit/internal/handler" due to visibility of internal
+// "github.com/AshkanYarmoradi/hcledit/internal/handler" due to visibility of internal
 // packages.
 func BlockVal(labels ...string) *handler.BlockVal {
 	return &handler.BlockVal{

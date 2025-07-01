@@ -5,7 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"go.mercari.io/hcledit/cmd/hcledit/internal/version"
+	"github.com/AshkanYarmoradi/hcledit/cmd/hcledit/internal/version"
 )
 
 func NewCmdVersion() *cobra.Command {

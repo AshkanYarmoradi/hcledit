@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/hcl/v2/hclwrite"
 
-	"go.mercari.io/hcledit/internal/ast"
+	"github.com/AshkanYarmoradi/hcledit/internal/ast"
 )
 
 type BlockVal struct {

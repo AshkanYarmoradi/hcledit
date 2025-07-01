@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"go.mercari.io/hcledit"
+	"github.com/AshkanYarmoradi/hcledit"
 )
 
 func TestWithComment(t *testing.T) {

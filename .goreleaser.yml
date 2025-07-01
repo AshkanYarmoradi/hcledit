@@ -9,8 +9,8 @@ builds:
     dir: cmd/hcledit
     ldflags:
       - -s -w
-      - -X go.mercari.io/hcledit/cmd/hcledit/internal/version.Version={{.Tag}}
-      - -X go.mercari.io/hcledit/cmd/hcledit/internal/version.Revision={{.ShortCommit}}
+      - -X github.com/AshkanYarmoradi/hcledit/cmd/hcledit/internal/version.Version={{.Tag}}
+      - -X github.com/AshkanYarmoradi/hcledit/cmd/hcledit/internal/version.Revision={{.ShortCommit}}
     goos:
       - linux
       - windows

@@ -3,7 +3,7 @@ package hcledit_test
 import (
 	"testing"
 
-	"go.mercari.io/hcledit"
+	"github.com/AshkanYarmoradi/hcledit"
 )
 
 func TestReadFile(t *testing.T) {

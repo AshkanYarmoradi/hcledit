@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/AshkanYarmoradi/hcledit"
 	"github.com/spf13/cobra"
-	"go.mercari.io/hcledit"
 )
 
 func NewCmdRoot() *cobra.Command {
