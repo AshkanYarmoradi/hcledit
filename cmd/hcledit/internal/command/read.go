@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"math/big"
-	"reflect"
 	"strings"
 	"text/template"
 
@@ -61,37 +59,16 @@ func runRead(opts *ReadOptions, args []string) (string, error) {
 		return "", fmt.Errorf("failed to read file: %s", err)
 	}
 
-	converted := make(map[string]interface{})
-	for k, v := range results {
-		converted[k] = ctyToGo(v)
-	}
-
-	// Special case: for YAML output, if the value is a string that looks like an array (e.g. "[a b c]"), convert it to a slice
-	if opts.OutputFormat == "yaml" {
-		for k, v := range converted {
-			if s, ok := v.(string); ok && strings.HasPrefix(s, "[") && strings.HasSuffix(s, "]") {
-				// Remove brackets and split by space
-				trimmed := strings.TrimSuffix(strings.TrimPrefix(s, "["), "]")
-				if len(trimmed) > 0 {
-					parts := strings.Fields(trimmed)
-					converted[k] = parts
-				} else {
-					converted[k] = []string{}
-				}
-			}
-		}
-	}
-
 	if strings.HasPrefix(opts.OutputFormat, "go-template") {
-		return displayTemplate(opts.OutputFormat, converted)
+		return displayTemplate(opts.OutputFormat, results)
 	}
 
 	switch opts.OutputFormat {
 	case "json":
-		j, err := json.Marshal(converted)
+		j, err := json.Marshal(results)
 		return string(j), err
 	case "yaml":
-		y, err := yaml.Marshal(converted)
+		y, err := yaml.Marshal(results)
 		return string(y), err
 	default:
 		return "", fmt.Errorf("invalid output-format: %s", opts.OutputFormat)
@@ -129,61 +106,4 @@ func displayTemplate(format string, results map[string]interface{}) (string, err
 	}
 
 	return result.String(), nil
-}
-
-// ctyToGo recursively converts cty.Value to Go native types.
-func ctyToGo(val interface{}) interface{} {
-	switch v := val.(type) {
-	case nil:
-		return nil
-	case string, int, float64, bool:
-		return v
-	case fmt.Stringer:
-		return v.String()
-	}
-	// Try cty.Value
-	if _, ok := val.(interface{ Type() interface{} }); ok {
-		typeName := fmt.Sprintf("%T", val)
-		if strings.Contains(typeName, "cty.Value") {
-			ctyVal := reflect.ValueOf(val)
-			isNull := ctyVal.MethodByName("IsNull").Call(nil)[0].Bool()
-			isKnown := ctyVal.MethodByName("IsKnown").Call(nil)[0].Bool()
-			if isNull || !isKnown {
-				return nil
-			}
-			canIter := ctyVal.MethodByName("CanIterateElements").Call(nil)[0].Bool()
-			if canIter {
-				asSlice := ctyVal.MethodByName("AsValueSlice").Call(nil)[0]
-				res := make([]interface{}, asSlice.Len())
-				for i := 0; i < asSlice.Len(); i++ {
-					res[i] = ctyToGo(asSlice.Index(i).Interface())
-				}
-				return res
-			}
-			asMap := ctyVal.MethodByName("AsValueMap").Call(nil)[0]
-			if asMap.Len() > 0 {
-				res := make(map[string]interface{})
-				for _, key := range asMap.MapKeys() {
-					res[key.String()] = ctyToGo(asMap.MapIndex(key).Interface())
-				}
-				return res
-			}
-			// Only use AsString for primitive types
-			asString := ctyVal.MethodByName("AsString").Call(nil)[0].String()
-			// AsBigFloat
-			asBigFloat := ctyVal.MethodByName("AsBigFloat").Call(nil)[0]
-			if !asBigFloat.IsNil() {
-				b := asBigFloat.Interface().(*big.Float)
-				f, _ := b.Float64()
-				return f
-			}
-			// Check if the value is a primitive type
-			typeField := ctyVal.MethodByName("Type").Call(nil)[0]
-			if typeField.String() == "cty.String" || typeField.String() == "cty.Number" || typeField.String() == "cty.Bool" {
-				return asString
-			}
-			return nil
-		}
-	}
-	return fmt.Sprintf("%v", val)
 }
